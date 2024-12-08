@@ -1,0 +1,815 @@
+﻿using lab_1;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+Console.OutputEncoding = Encoding.UTF8;
+
+List<Client> clients = new List<Client>();
+
+int answer = 0;
+int maxClients = 0;
+
+string GenerateName(int len)
+{
+    Random r = new Random();
+    string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "sh", "zh", "t", "v", "w", "x" };
+    string[] vowels = { "a", "e", "i", "o", "u", "ae", "y" };
+    string Name = "";
+    Name += consonants[r.Next(consonants.Length)].ToUpper();
+    Name += vowels[r.Next(vowels.Length)];
+    int b = 2;
+    while (b < len)
+    {
+        Name += consonants[r.Next(consonants.Length)];
+        b++;
+        Name += vowels[r.Next(vowels.Length)];
+        b++;
+    }
+
+    return Name;
+
+
+}
+
+
+bool RangeTest(string answer, float floor, float ceil)
+{
+    if (int.Parse(answer) >= floor && int.Parse(answer) <= ceil)
+    {
+        return true;
+    }
+    else 
+    {
+        return false;
+    };
+}
+
+
+string IsValid(string line)
+{
+    try
+    {
+        List<string> errors = new List<string>();
+
+        // Перевірка на наявність недопустимих символів та правильний формат
+        if (string.IsNullOrWhiteSpace(line))
+            errors.Add("Ввід порожній або містить тільки пробіли.");
+
+        foreach (char c in line)
+        {
+            if (!char.IsLetter(c))
+            {
+                //throw new Exception("Ввід містить недопустимі символи.");
+                errors.Add("Ввід містить недопустимі символи.");
+                break; // Зупиняємо перевірку, якщо знайдено помилку
+
+            }
+        }
+
+        // Перевіряємо, чи були знайдені помилки
+        if (errors.Count > 0)
+            return string.Join(" ", errors); // Повертаємо всі помилки, з'єднані пробілами
+        else
+            return "true";
+    }
+    catch (Exception ex)
+    {
+        return ex.Message;
+    }
+}
+
+
+Client addClient() {
+    Client client = new Client();
+
+    bool correct_inp = false;
+    string input;
+
+    while (true)
+    {
+        Console.Write("\nВведіть 1 для ручного введення та 2 для автоматичного створення імені: ");
+        input = Console.ReadLine();
+
+        if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 1, 2))
+        {
+                answer = int.Parse(input);
+                break;
+        }
+        else
+        {
+            Console.WriteLine("\nНекоректний ввід");
+        }
+    }
+
+    if (answer == 1)
+    {
+        while(true)
+        {
+            Console.Write("\nВведіть ім'я (3-20): ");
+            input = Console.ReadLine();
+            try 
+            {
+                client.Name = input;
+                break;
+            }
+            catch (Exception e) 
+            {
+                Console.WriteLine($"\n{e.Message}");
+            }
+        }
+
+        while (true)
+        {
+            Console.Write("\nВведіть прізвище (3-20): ");
+            input = Console.ReadLine();
+            try
+            {
+                client.Surname = input;
+                break;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"\n{e.Message}");
+            }
+        }
+    }//Name && Surname
+    else
+    {
+        correct_inp = false;
+        while (true)
+        {
+            Console.Write("\nВеддіть бажану довжину імені(3-20): ");
+            input = Console.ReadLine();
+            if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 3, 20))
+            {
+                client.Name = GenerateName(answer);
+                break;
+            }
+            else
+            {
+                Console.WriteLine("\nНекоректний ввід");
+            }
+        }
+
+        while (true)
+        {
+            Console.Write("\nВеддіть бажану довжину прізвища(3-20): ");
+            input = Console.ReadLine();
+            if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 3, 20))
+            {
+                answer = int.Parse(input);
+                client.Surname = GenerateName(answer);
+                break;
+            }
+            else
+            {
+                Console.WriteLine("\nНекоректний ввід");
+            }
+        }
+    }//Generate Name && Surname
+
+    bool isError;
+
+    while (true)
+    {
+        try
+        {
+            Console.Write("\nВведіть гендер 1-Man, 2-Woman, 3-Other: ");
+            input = Console.ReadLine();
+            Gender gender = toGender(input);
+            client.Gender = gender;
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\n{ex.Message}");
+        }
+    }//Gender
+
+    while (true)
+    {
+        Console.Write("\nВведіть назву МІСТА: ");
+        input = Console.ReadLine();
+
+        try
+        { 
+            client.City = input;
+            break;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"\n{e.Message}");
+        }
+    }//City
+
+    while (true)
+    {
+        Console.Write("\nВведіть назву ВУЛИЦІ: ");
+        input = Console.ReadLine();
+
+        try
+        {
+            client.Street = input;
+            break;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"\n{e.Message}");
+        }
+    }//Street
+
+    while (true)
+    {
+        Console.Write("\nВведіть НОМЕР БУДИНКУ: ");
+        input = Console.ReadLine();
+
+        try
+        {
+            client.Housenumber = input;
+            break;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"\n{e.Message}");
+        }
+    }//Housenumber
+
+    //client.Address = $"{city}, {street}, {housenumber}";
+
+    while (true)
+    {
+        isError = false;
+        try
+        {
+            Console.Write("\nВведіть статус акаунту 1-Active, 2-Inactive: ");
+            input = Console.ReadLine();
+            Status status = toStatus(input);
+            client.Status = status;
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\n{ex.Message}");
+        }
+    }//Status
+
+    while (true) 
+    {
+        DateOnly date;
+        try
+        {
+            Console.Write("\nВведіть дату народження(вік від 14 до 122) у форматі dd/mm/yyyy: ");
+            input = Console.ReadLine();
+            date = toDate(input);
+            client.BirthDate = date;
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\n{ex.Message}");
+        }
+    } //Birthdate
+
+    return client;
+}
+
+
+Gender toGender(string input) 
+{
+    Gender gender;
+    if (!string.IsNullOrWhiteSpace(input))
+    {
+        switch (input)
+        {
+            case "1":
+                return gender = Gender.Man;
+
+            case "2":
+                return gender = Gender.Woman;
+
+            case "3":
+                return gender = Gender.Other;
+
+            default:
+                input = input.ToLower();
+                input = char.ToUpper(input[0]) + input.Substring(1);
+                if (input == "Man")
+                {
+                    return gender = Gender.Man;
+                }
+                else if (input == "Woman")
+                {
+                    return gender = Gender.Woman;
+                }
+                else if (input == "Other")
+                {
+                    return gender = Gender.Other;
+                }
+                else
+                {
+                    throw new Exception("Некоректний ввід");
+                }
+        }
+    }
+    else
+    {
+        throw new Exception("Некоректний ввід");
+    }
+}
+
+
+DateOnly toDate(string input)
+{
+    DateOnly date;
+
+    if (DateOnly.TryParseExact(input, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+    {
+        return date;
+    }
+    else
+    {
+        throw new Exception("Некоректний ввід");
+    }
+}
+
+
+Status toStatus(string input) 
+{
+    Status status;
+    if (!string.IsNullOrWhiteSpace(input))
+    {
+        if (input == "1")
+        {
+            return status = Status.Active;
+        }
+        else if (input == "2")
+        {
+            return status = Status.Inactive;
+        }
+        else
+        {
+            input = input.ToLower();
+            input = char.ToUpper(input[0]) + input.Substring(1);
+            if (input == "Active")
+            {
+                return status = Status.Active;
+            }
+            else if (input == "Inactive")
+            {
+                return status = Status.Inactive;
+            }
+            else throw new Exception("Некоректний ввід");
+        }
+    }
+    else
+    {
+        throw new Exception("Некоректний ввід");
+    }
+}
+
+
+string inputfullname()
+{
+    bool correct_inp = false;
+    string input;
+    string name;
+    string surname;
+    string res = "";
+
+    while (correct_inp == false)
+    {
+        bool correct_inp_1 = false;
+
+        Console.Write("\nВведіть ІМ'Я(3-20): ");
+        input = Console.ReadLine();
+
+        if (IsValid(input) == "true" && input.Length >= 3)
+        {
+            name = input;
+            while (correct_inp_1 == false)
+            {
+                Console.Write("\nВведіть ПРІЗВИЩЕ(3-20): ");
+                input = Console.ReadLine();
+
+                if (IsValid(input) == "true" && input.Length >= 3)
+                {
+                    surname = input;
+                    res = $"{name} {surname}";
+
+                    correct_inp = true;
+                    correct_inp_1 = true;
+                }
+                else
+                {
+                    Console.WriteLine("\nНекоректний ввід ");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("\nНекоректний ввід");
+        }
+
+    }
+    return res;
+}
+
+
+Client findClient() 
+{
+    bool correct_inp = false;
+    bool correct_inp_1 = false;
+    bool suc = false;
+    string input;
+    Client result = new Client();
+
+    while (correct_inp == false)
+    {
+        int answer;
+        Console.Write("\nЗдійснити пошук за 1-Номером клієнта, 2-За іменем: ");
+        input = Console.ReadLine();
+        if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 1, 2))
+        {
+            while (correct_inp_1 == false)
+            {
+                if (answer == 1)
+                {
+                    int answer_1;
+                    Console.Write("\nВведіть номер об'єкта для пошуку: ");
+                    input = Console.ReadLine();
+                    if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer_1) && RangeTest(input, 1, clients.Count))
+                    {
+                        Console.WriteLine("\nОб'єкт успішно знайдено: ");
+                        printClientInfo(clients[answer_1 - 1], answer_1 - 1);
+                        correct_inp_1 = true;
+                        suc = true;
+                        result = clients[answer_1 - 1];
+                        return result;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nНекоректний ввід або об'єкт з даним номером не існує");
+                    }
+                }
+                if (answer == 2)
+                {
+                    string name;
+
+                    Console.WriteLine("\nЗараз вам буде потрібно ввести окремо ІМ'Я, а потім ПРІЗВИЩЕ!");
+                    name = inputfullname();
+                    for (int i = 0; i < clients.Count; i++)
+                    {
+                        if (name == clients[i].FullName)
+                        {
+                            printClientInfo(clients[i], i);
+                            suc = true;
+                            result = clients[i];
+                            return result;
+                        }
+                    }
+                    correct_inp_1 = true;
+                }
+            }
+            if (suc == false) { Console.WriteLine("\nНе вдалося нічого знайти, перевірте правильність даних!"); }
+            
+            correct_inp = true;
+        }
+        else
+        {
+            Console.WriteLine("\nНекоректний ввід");
+        }
+    }
+    return result;
+}
+
+
+void printClientInfo(Client client, int number)
+{
+    Console.WriteLine($"\nКлієнт {number + 1}:");
+    Console.WriteLine($"Ім'я: {client.FullName}");
+    Console.WriteLine($"Гендер: {client.Gender}");
+    Console.WriteLine($"Адреса: {client.getAddress()}");
+    Console.WriteLine($"Кіл-ть бонусних балів: {client.Bonus}");
+    Console.WriteLine($"Статус акаунту: {client.Status}");
+    Console.WriteLine($"Дата народження: {client.BirthDate}");
+}
+
+
+void Start() 
+{
+    bool correct_inp = false;
+    string input;
+    int answer;
+
+    while (correct_inp == false)
+    {
+        Console.Write("\nВведіть максимальну кількість об'єктів класу(1-100): ");
+        input = Console.ReadLine();
+        if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 1, 100))
+        {
+            correct_inp = true;
+            maxClients = int.Parse(input);
+        }
+        else
+        {
+            Console.WriteLine("\nНекоректний ввід");
+        }
+    }
+}
+
+
+void Main(List<Client> clients)
+{
+    try
+    {
+        bool correct_inp;
+        bool correct_inp_1 = false;
+        string input;
+
+        correct_inp = false;
+        while (correct_inp == false)
+        {
+            Console.Write(
+                "\n1 – додати об’єкт\r\n" +
+                "2 – вивести на екран об’єкти\r\n" +
+                "3 – знайти об’єкт\r\n" +
+                "4 – видалити об’єкт\r\n" +
+                "5 – демонстрація поведінки\r\n" +
+                "0 – вийти з програми\r\n"
+                );
+            input = Console.ReadLine();
+            if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 0, 5))
+            {
+                    correct_inp = true;
+                    answer = int.Parse(input);
+            }
+            else
+            {
+                Console.WriteLine("\nНекоректний ввід");
+            }
+        }
+
+        correct_inp = false;
+
+        switch (answer)
+        {
+            case 0:
+                Console.WriteLine("\nРоботу програми завершено!");
+                Environment.Exit(0);
+                break;
+
+            case 1:
+                if (clients.Count < maxClients)
+                {
+                    clients.Add(addClient());
+                    Console.WriteLine("\nКлієнта успішно додано!");
+                }
+                else
+                {
+                    Console.WriteLine($"\nДосягнуто ліміт кількості об'єктів класу({maxClients})!");
+                }
+                break;
+
+            case 2:
+                Console.WriteLine("\nКлієнти:");
+                for (int i = 0; i < clients.Count; i++) {
+                    Client client = clients[i];
+                    printClientInfo(client, i);
+                }
+                break;
+
+            case 3:
+                findClient();
+                break;
+
+            case 4:
+                correct_inp = false;
+                correct_inp_1 = false;
+                bool success = false;
+
+                while (correct_inp == false)
+                {
+                    int answer;
+                    Console.Write("\nЗдійснити видалення об'єкта за 1-Номером клієнта, 2-Іменем: ");
+                    input = Console.ReadLine();
+                    if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 1, 2))
+                    {
+                        while (correct_inp_1 == false)
+                        {
+                            if (answer == 1)
+                            {
+                                int answer_1;
+                                Console.Write("\nВведіть номер об'єкта для видалення: ");
+                                input = Console.ReadLine();
+                                if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer_1) && RangeTest(input, 1, clients.Count))
+                                {
+                                    clients.RemoveAt(answer_1 - 1);
+                                    Console.WriteLine($"\nОб'єкт під номером {answer} було успішно видалено!");
+                                    correct_inp = true;
+                                    correct_inp_1 = true;
+                                    success = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("\nНекоректний ввід або об'єкт з даним номером не існує");
+                                }
+                            }
+                            if (answer == 2)
+                            {
+                                string name;
+
+                                Console.WriteLine("\nЗараз вам буде потрібно ввести окремо ІМ'Я, а потім ПРІЗВИЩЕ!");
+                                name = inputfullname();
+                                for (int i = 0; i < clients.Count; i++)
+                                {
+                                    if (name == clients[i].FullName)
+                                    {
+                                        Console.WriteLine($"\nОб'єкт з іменем '{name}' було успішно видалено!");
+                                        clients.RemoveAt(i);
+                                        success = true;
+                                    }
+                                }
+                                correct_inp_1 = true;
+                            }
+                        }
+                        if (success == false) { Console.WriteLine("\nНе вдалося нічого знайти та видалити, перевірте правильність даних!"); }
+
+                        correct_inp = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nНекоректний ввід");
+                    }
+                }
+                break;
+
+            case 5:
+                correct_inp = false;
+                while (correct_inp == false) {
+                    Console.Write
+                    (
+                    "\n0 – Назад\r\n" +
+                    "1 – Зробити покупку(додати бонуси до акаунту)\r\n" +
+                    "2 – Отриимати знижку за бонуси(макс. - 10%)\r\n" +
+                    "3 – Оплатити покупки бонусами(Виключно 100% від суми покупки)\r\n" +
+                    "4 - Вивести Ім'я та Прізвище акаунту\r\n" +
+                    "5 - Розрахувати максимальну знижку\r\n"
+                    );
+                    input = Console.ReadLine();
+                    if (!(string.IsNullOrWhiteSpace(input)) && int.TryParse(input, out answer) && RangeTest(input, 0, 5))
+                    {
+                        correct_inp = true;
+                        answer = int.Parse(input);
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nНекоректний ввід");
+                    }
+                }
+
+                correct_inp = false;
+
+                switch (answer) 
+                {
+                    case 1:
+                        correct_inp = false;
+                        float answer_1;
+                        Client client_1 = findClient();
+                        while (correct_inp == false){
+                            Console.Write("\nВведіть суму покупки: ");
+                            input = Console.ReadLine();
+                            if (!(string.IsNullOrWhiteSpace(input)) && float.TryParse(input, out answer_1) && RangeTest(input, 1, float.MaxValue))
+                            {
+                                client_1.addBonus(answer_1);
+                                Console.WriteLine($"\nДо акаунту додано {answer_1} бонусів");
+                                Console.WriteLine($"\nПоточний баланс бонусів на акаунті: {client_1.Bonus}");
+                                correct_inp = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nНекоректний ввід");
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        correct_inp = false;
+                        float answer_2;
+                        Client client_2 = findClient();
+                        float[] result_2 = new float[3];
+                        while (correct_inp == false)
+                        {
+                            Console.Write("\nВведіть суму покупки: ");
+                            input = Console.ReadLine();
+                            if (!(string.IsNullOrWhiteSpace(input)) && float.TryParse(input, out answer_2) && RangeTest(input, 1, float.MaxValue))
+                            {
+                                Console.WriteLine($"\nПоточний баланс бонусів на акаунті: {client_2.Bonus}");
+                                result_2 = client_2.getDiscount(answer_2);
+                                Console.WriteLine($"\nВитрачені бонуси: {result_2[1]}");
+                                Console.WriteLine($"\nСума зі знижкою: {result_2[0]}");
+                                Console.WriteLine($"\nЗалишок бонусів: {result_2[2]}");
+                                correct_inp = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nНекоректний ввід");
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        correct_inp = false;
+                        float answer_3;
+                        Client client_3 = findClient();
+                        string[] result_3 = new string[3];
+                        while (correct_inp == false)
+                        {
+                            Console.Write("\nВведіть суму покупки за бонуси: ");
+                            input = Console.ReadLine();
+                            if (!(string.IsNullOrWhiteSpace(input)) && float.TryParse(input, out answer_3) && RangeTest(input, 1, float.MaxValue))
+                            {
+                                Console.WriteLine($"\nПоточний баланс бонусів на акаунті: {client_3.Bonus}");
+                                result_3 = client_3.buyByBonus(answer_3);
+                                if (result_3[0] == "true")
+                                {
+                                    Console.WriteLine("\nОперація успішна!");
+                                    Console.WriteLine($"\nВитрачені бонуси: {result_3[1]}");
+                                    Console.WriteLine($"\nЗалишок бонусів: {result_3[2]}");
+                                }
+                                else 
+                                {
+                                    Console.WriteLine("\nНедостатньо бонусів!");
+                                }
+                                correct_inp = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nНекоректний ввід");
+                            }
+                        }
+                        break;
+
+                    case 4:
+                        while (true)
+                        {
+                            try
+                            {
+                                Console.Write("\nВведіть номер акаунту: ");
+                                input = Console.ReadLine();
+                                if (int.TryParse(input, out answer) && RangeTest(input, 1, clients.Count))
+                                {
+                                    Console.WriteLine($"\n{clients[answer - 1].FullName}");
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("\nНекоректний ввід");
+                                }
+                            }
+                            catch (Exception ex) { Console.WriteLine($"\n{ex.Message}"); break; }
+                        }
+                        break;
+
+                    case 5:
+                        while (true)
+                        {
+                            float[] result_5 = new float[3];
+                            Client client_5 = findClient();
+                            Console.Write("\nВведіть суму покупки: ");
+                            input = Console.ReadLine();
+                            if (!(string.IsNullOrWhiteSpace(input)) && float.TryParse(input, out answer_2) && RangeTest(input, 1, float.MaxValue))
+                            {
+                                result_5 = client_5.showMaxDiscount(float.Parse(input));
+                                Console.WriteLine($"\nВитрачені бонуси: {result_5[1]}");
+                                Console.WriteLine($"\nСума зі знижкою: {result_5[0]}");
+                                Console.WriteLine($"\nЗалишок бонусів: {result_5[2]}");
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nНекоректний ввід");
+                            }
+                            break;
+                        }
+
+                        break;
+                        
+                }
+                break;
+        }   
+        Main(clients);
+
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+}
+
+Start();
+Main(clients);

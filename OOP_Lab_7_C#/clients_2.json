@@ -1,0 +1,35 @@
+[
+  {
+    "Bonus": 300,
+    "Name": "Unknown",
+    "Surname": "Unknown",
+    "Gender": 2,
+    "City": "Unknown",
+    "Street": "Unknown",
+    "Housenumber": "1",
+    "Status": 1,
+    "BirthDate": "2001-01-01",
+    "FullName": "Unknown Unknown"
+  },
+  {
+    "Bonus": 0,
+    "Name": "fgh",
+    "Surname": "dfg",
+    "Gender": 0,
+    "Status": 0,
+    "BirthDate": "0001-01-01",
+    "FullName": "fgh dfg"
+  },
+  {
+    "Bonus": 0,
+    "Name": "dfg",
+    "Surname": "dfg",
+    "Gender": 0,
+    "City": "dfg",
+    "Street": "dfg",
+    "Housenumber": "11a",
+    "Status": 0,
+    "BirthDate": "2001-09-11",
+    "FullName": "dfg dfg"
+  }
+]

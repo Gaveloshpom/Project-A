@@ -1,0 +1,38 @@
+[
+  {
+    "Bonus": 0,
+    "Name": "Unknown",
+    "Surname": "Unknown",
+    "Gender": 2,
+    "City": "Unknown",
+    "Street": "Unknown",
+    "Housenumber": "1",
+    "Status": 1,
+    "BirthDate": "2001-01-01",
+    "FullName": "Unknown Unknown"
+  },
+  {
+    "Bonus": 0,
+    "Name": "\u0432\u0430\u043F",
+    "Surname": "\u0432\u0430\u043F",
+    "Gender": 0,
+    "City": null,
+    "Street": null,
+    "Housenumber": null,
+    "Status": 0,
+    "BirthDate": "0001-01-01",
+    "FullName": "\u0432\u0430\u043F \u0432\u0430\u043F"
+  },
+  {
+    "Bonus": 300,
+    "Name": "qwe",
+    "Surname": "qwe",
+    "Gender": 0,
+    "City": "fgh",
+    "Street": "fgh",
+    "Housenumber": "11A",
+    "Status": 0,
+    "BirthDate": "2002-09-11",
+    "FullName": "qwe qwe"
+  }
+]

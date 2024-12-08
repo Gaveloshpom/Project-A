@@ -1,0 +1,38 @@
+[
+  {
+    "Bonus": 0,
+    "Name": "иап",
+    "Surname": "ива",
+    "Gender": 0,
+    "City": null,
+    "Street": null,
+    "Housenumber": null,
+    "Status": 0,
+    "BirthDate": "0001-01-01",
+    "FullName": "иап ива"
+  },
+  {
+    "Bonus": 0,
+    "Name": "Unknown",
+    "Surname": "Unknown",
+    "Gender": 2,
+    "City": "Unknown",
+    "Street": "Unknown",
+    "Housenumber": "1",
+    "Status": 1,
+    "BirthDate": "2001-01-01",
+    "FullName": "Unknown Unknown"
+  },
+  {
+    "Bonus": 0,
+    "Name": "Unknown",
+    "Surname": "Unknown",
+    "Gender": 2,
+    "City": "Unknown",
+    "Street": "Unknown",
+    "Housenumber": "3",
+    "Status": 1,
+    "BirthDate": "2001-01-01",
+    "FullName": "Unknown Unknown"
+  }
+]
